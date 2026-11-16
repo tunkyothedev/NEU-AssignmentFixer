@@ -27,7 +27,10 @@ def package():
         print(f"[Error] Thư mục '{dist_dir}' không tồn tại. Vui lòng chạy 'python build_exe.py' trước!")
         sys.exit(1)
 
-    zip_filename = f"AssignmentFixer-v{APP_VERSION}-windows.zip"
+    version = os.getenv("RELEASE_VERSION") or (sys.argv[1] if len(sys.argv) > 1 else APP_VERSION)
+    version = version.strip().lstrip("vV")
+
+    zip_filename = f"AssignmentFixer-v{version}-windows.zip"
     zip_path = releases_dir / zip_filename
 
     print(f"[*] Đang đóng gói bản phát hành: {zip_filename}...")
@@ -41,18 +44,24 @@ def package():
     file_size_mb = zip_path.stat().st_size / (1024 * 1024)
     sha256 = compute_sha256(zip_path)
 
+    sha256_filename = f"{zip_filename}.sha256"
+    sha256_path = releases_dir / sha256_filename
+    with open(sha256_path, "w", encoding="utf-8") as f:
+        f.write(f"{sha256}  {zip_filename}\n")
+
     print("\n" + "=" * 60)
     print("  ĐÓNG GÓI BẢN PHÁT HÀNH THÀNH CÔNG!")
     print("=" * 60)
-    print(f"Phiên bản : v{APP_VERSION}")
+    print(f"Phiên bản : v{version}")
     print(f"Tệp nén   : {zip_path}")
     print(f"Dung lượng: {file_size_mb:.2f} MB")
     print(f"SHA256    : {sha256}")
+    print(f"Checksum  : {sha256_path}")
     print("\n[Hướng dẫn tạo GitHub Release]:")
     print(f"1. Vào: https://github.com/tunkyothedev/NEU-AssignmentFixer/releases/new")
-    print(f"2. Tag version: v{APP_VERSION}")
-    print(f"3. Release title: AssignmentFixer v{APP_VERSION}")
-    print(f"4. Đính kèm tệp: {zip_filename} vào mục Assets")
+    print(f"2. Tag version: v{version}")
+    print(f"3. Release title: AssignmentFixer v{version}")
+    print(f"4. Đính kèm tệp: {zip_filename} và {sha256_filename} vào mục Assets")
     print("=" * 60 + "\n")
 
 if __name__ == "__main__":
