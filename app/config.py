@@ -1,14 +1,21 @@
 import os
+import sys
 import json
 import socket
 from pathlib import Path
 from pydantic import BaseModel, Field
 
-CONFIG_FILE = Path(r"E:\AssignmentFixer\local_config.json")
+def get_base_dir() -> Path:
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).resolve().parent
+    return Path(__file__).resolve().parent.parent
+
+BASE_DIR = get_base_dir()
+CONFIG_FILE = BASE_DIR / "local_config.json"
 
 class AppConfig(BaseModel):
     machine_id: str = Field(default_factory=lambda: socket.gethostname())
-    gdrive_data_dir: str = r"E:\AssignmentFixer\data"
+    gdrive_data_dir: str = str(BASE_DIR / "data")
     
     # Provider: 'kira_api' | 'gemini_cli' | 'gemini_api'
     default_provider: str = "kira_api"

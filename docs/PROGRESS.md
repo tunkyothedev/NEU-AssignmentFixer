@@ -13,7 +13,7 @@ Tài liệu này ghi lại chi tiết các cột mốc, trạng thái hoàn thà
 | **M2** | Pipeline Sửa nhẹ (Track Changes & Comments) | **HOÀN THÀNH (100%)** | - Đã triển khai xong [`app/pipeline/light_fix_flow.py`](file:///E:/AssignmentFixer/app/pipeline/light_fix_flow.py).<br>- Luồng chạy end-to-end hoàn chỉnh: Quét quy chuẩn hình thức -> Đánh giá rubric (KiraAI) -> Sửa đoạn văn học thuật -> Word Compare tạo Track Changes bản địa -> Chèn Word Comments giải thích.<br>- **Kiểm thử thực tế thành công:** File kết quả [`test_light_fix_output.docx`](file:///E:/AssignmentFixer/data/test_light_fix_output.docx) sinh ra chứa **55 điểm thêm (ins)**, **47 điểm xóa (del)** và **3 bong bóng nhận xét (Comments)** giải thích lỗi ngữ pháp/logic bằng tiếng Anh. |
 | **M3** | Vòng lặp Học phong cách (Diff & Style Guide) | **HOÀN THÀNH (100%)** | - Đã triển khai [`app/core/diff_extractor.py`](file:///E:/AssignmentFixer/app/core/diff_extractor.py) và [`app/core/learning_manager.py`](file:///E:/AssignmentFixer/app/core/learning_manager.py).<br>- Tự động so sánh bóc tách khác biệt trên cả 4 cặp bài thật (BS, OBM, SFM, MSBP), bóc tách hàng trăm điểm sửa.<br>- Dùng KiraAI tự động phân loại loại lỗi (`academic_tone`, `clarity`, `critical_thinking`) và ghi thành công vào kho lưu trữ [`data/corrections/pair_obm_01.jsonl`](file:///E:/AssignmentFixer/data/corrections/pair_obm_01.jsonl).<br>- Khởi tạo và đồng bộ [`data/style_guide.md`](file:///E:/AssignmentFixer/data/style_guide.md). |
 | **M4** | Pipeline Sửa nặng (Viết lại & Bổ sung Rubric) | **HOÀN THÀNH (100%)** | - Đã triển khai xong [`app/pipeline/heavy_fix_flow.py`](file:///E:/AssignmentFixer/app/pipeline/heavy_fix_flow.py).<br>- Tự động đánh giá các Learning Outcomes / Criteria bị thiếu hụt.<br>- Tái cấu trúc toàn bộ bài viết theo chuẩn đề mục BTEC (1., 2., 3., 4., 5.).<br>- **Tự động bổ sung các phần còn thiếu:** Thêm phân tích năng lực nội bộ (VRIO), Kế hoạch quản trị chiến lược (M4/D1) và Đề xuất chiến lược.<br>- **Kiểm thử thực tế thành công trên bài BS:** File kết quả [`test_heavy_fix_output.docx`](file:///E:/AssignmentFixer/data/test_heavy_fix_output.docx) được sinh trong 11s, gồm 45 đoạn văn chuẩn format Times New Roman 12pt, lề 1 inch, dãn dòng 1.5; **21 đoạn văn viết mới được tự động highlight màu vàng nhạt** và **8 trích dẫn mới được gắn cờ `[VERIFY]`** để người dùng dễ dàng kiểm chứng. |
-| **M5** | Đóng gói Giao diện Desktop (UI) & Launcher | **HOÀN THÀNH (100%)** | - Đã xây dựng hoàn thiện ứng dụng Desktop Native chuẩn Dark Theme hiện đại tại [`app/main.py`](file:///E:/AssignmentFixer/app/main.py) bằng `customtkinter`.<br>- **3 màn hình chức năng trực quan:**<br>  1. **Sửa bài:** Chọn file bài làm, chọn đề bài, chọn môn, chọn chế độ sửa (Tự động / Nhẹ / Nặng), xem log tiến trình thời gian thực và bấm 1 nút mở ngay file Word kết quả.<br>  2. **Dạy tool:** Chọn cặp bài cũ để AI tự động bóc tách quy tắc lưu vào `corrections/` và chỉnh sửa trực tiếp `style_guide.md`.<br>  3. **Cài đặt:** Quản lý KiraAI API Key, model AI và đường dẫn thư mục Google Drive.<br>- Tạo launcher [`run_app.bat`](file:///E:/AssignmentFixer/run_app.bat) để khởi chạy app bằng 1 cú click chuột (cực kỳ tiện lợi cho partner).<br>- *Hotfix UI:* Bổ sung `from docx import Document` trong [`app/main.py`](file:///E:/AssignmentFixer/app/main.py) sửa triệt để lỗi `name 'Document' is not defined` khi bấm Bắt đầu sửa ở chế độ Tự động. |
+| **M5** | Đóng gói Giao diện Desktop (UI) & Launcher | **HOÀN THÀNH (100%)** | - Đã xây dựng hoàn thiện ứng dụng Desktop Native chuẩn Dark Theme hiện đại tại [`app/main.py`](file:///E:/AssignmentFixer/app/main.py) bằng `customtkinter`.<br>- **3 màn hình chức năng trực quan:** Sửa bài, Dạy tool & Cài đặt hệ thống.<br>- **Đóng gói Portable Executable độc lập (`AssignmentFixer.exe`):** Đã biên dịch toàn bộ mã nguồn qua PyInstaller tại thư mục `dist/AssignmentFixer/AssignmentFixer.exe`, đóng gói sẵn GUI, Word COM, DOCX, Pydantic, bảo mật mã nguồn và chạy không cần cài Python hay mở cửa sổ bat/console.<br>- Hỗ trợ đường dẫn tương đối động trong [`app/config.py`](file:///E:/AssignmentFixer/app/config.py) khi chạy ở dạng Portable bundle. |
 
 ---
 
@@ -85,3 +85,39 @@ Tài liệu này ghi lại chi tiết các cột mốc, trạng thái hoàn thà
   + Tệp `.gitignore` đã loại trừ toàn bộ tài liệu Word (`*.docx`, `*.doc`), bài làm sinh viên (`Chưa sửa/`, `Sửa rồi/`), đề bài (`Đề bài/`) và tệp xuất kết quả (`data/outputs/`).
   + Loại trừ khóa bảo mật và cấu hình cục bộ (`local_config.json`).
   + Cung cấp tệp mẫu [`local_config.example.json`](file:///E:/AssignmentFixer/local_config.example.json) sạch chuẩn cho cộng tác viên.
+
+---
+
+## 7. Quy Tắc Quản Trị Git & Nhánh (Git Workflow Rules)
+1. **Quy định Push:**
+   - **Tuyệt đối không tự ý push lên `main`** trừ khi người dùng ra lệnh trực tiếp.
+   - **Chỉ push nhánh `main`**, không push các nhánh phụ/nhánh tính năng lên remote GitHub.
+2. **Quy ước đặt tên nhánh (Branch Naming Convention):**
+   - Tính năng mới: `feat/[tên_nhánh]`
+   - Sửa lỗi/tính năng: `bugfix/[tên_nhánh]`
+3. **Quy trình làm việc (Branching & Merge Flow):**
+   - Khi có task mới, luôn tạo branch tách từ nhánh `main`.
+   - Nếu có bất kỳ điểm phân vân nào về xuất phát điểm hoặc phạm vi task, phải hỏi ý kiến người dùng trước khi tạo.
+   - Sau khi hoàn thành và kiểm thử task thành công trên branch, merge vào `main`. Không tự ý push trừ khi có lệnh.
+4. **Quy định tài liệu bắt buộc:**
+   - Đọc tài liệu Markdown (`docs/PROGRESS.md`) trước khi bắt đầu bất kỳ task nào.
+   - Cập nhật tài liệu Markdown (`docs/PROGRESS.md`) ngay sau khi hoàn thành.
+
+---
+
+## 8. Quy Trình Vòng Lặp Kiểm Chứng Đơn Tác Tử (Single-Agent Verification Loop)
+Áp dụng cho mọi task lập trình từ thời điểm này:
+1. **LẬP KẾ HOẠCH (PLAN):**
+   - Nhanh chóng phân tích nguyên nhân gốc rễ và đưa ra giải pháp kỹ thuật.
+   - Trình bày danh sách tệp cần tạo/sửa dưới 5 gạch đầu dòng ngắn gọn trước khi viết code.
+2. **THỰC THI (IMPLEMENT):**
+   - Viết code sạch, đúng kiến trúc, phạm vi sửa chữa tối giản, không sửa lan man.
+3. **KIỂM CHỨNG THỰC TẾ (VERIFY):**
+   - Chạy lệnh terminal kiểm tra ngay lập tức (compile, unit test module liên quan, py_compile...).
+4. **VÒNG LẶP SỬA LỖI CÓ GIỚI HẠN (Tối đa 3 lần - HARD STOP):**
+   - Nếu lỗi: phân tích log, sửa và test lại.
+   - Nếu thất bại 3 lần liên tiếp: **DỪNG LẬP TỨC**, giải thích lý do kẹt và xin ý kiến người dùng; không loop cháy quota.
+5. **TỰ KIỂM TOÁN CUỐI CÙNG (SELF-AUDIT):**
+   - Chạy `git diff` rà soát code thừa/debug, kiểm tra rò rỉ key nhạy cảm, dọn dẹp file nháp trước khi báo cáo.
+
+
