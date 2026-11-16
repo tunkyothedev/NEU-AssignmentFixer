@@ -30,6 +30,7 @@ class AppConfig(BaseModel):
     gemini_api_key: str = ""
     
     auto_open_word: bool = True
+    check_update_on_startup: bool = True
 
 def load_config() -> AppConfig:
     if CONFIG_FILE.exists():

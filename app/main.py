@@ -7,8 +7,11 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 import customtkinter as ctk
 
+from pathlib import Path
 from docx import Document
 from app.config import load_config, save_config, AppConfig
+from app.version import APP_VERSION, GITHUB_REPO
+from app.core.updater import AppUpdater
 from app.llm.openai_compatible import OpenAICompatibleProvider
 from app.llm.gemini_cli import GeminiCLIProvider
 from app.core.learning_manager import LearningManager
@@ -22,16 +25,20 @@ class AssignmentFixerApp(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title("AssignmentFixer — NEU Academic Assignment Editor")
+        self.title(f"AssignmentFixer v{APP_VERSION} — NEU Academic Assignment Editor")
         self.geometry("1100x720")
         self.minsize(950, 600)
 
         self.config = load_config()
+        self.updater = AppUpdater(repo=GITHUB_REPO, current_version=APP_VERSION)
         self._init_provider()
 
         self.current_output_path = None
         self._load_available_courses()
         self._build_ui()
+
+        if getattr(self.config, "check_update_on_startup", True):
+            self.after(2500, lambda: threading.Thread(target=self._check_update_background, daemon=True).start())
 
     def _init_provider(self):
         if self.config.default_provider == "gemini_cli":
@@ -82,7 +89,7 @@ class AssignmentFixerApp(ctk.CTk):
 
         self.sublogo_label = ctk.CTkLabel(
             self.sidebar_frame,
-            text="NEU BTEC Academic Tool",
+            text=f"NEU BTEC Tool • v{APP_VERSION}",
             font=ctk.CTkFont(size=12),
             text_color="gray"
         )
@@ -423,9 +430,189 @@ class AssignmentFixerApp(ctk.CTk):
             frame, text="Lưu Cấu Hình", height=38, width=150,
             command=self._save_settings
         )
-        btn_save_config.grid(row=8, column=1, sticky="w", padx=15, pady=18)
+        btn_save_config.grid(row=8, column=1, sticky="w", padx=15, pady=15)
+
+        # Divider
+        divider = ctk.CTkFrame(frame, height=2, fg_color="gray30")
+        divider.grid(row=9, column=0, columnspan=2, sticky="ew", padx=15, pady=(10, 15))
+
+        # Update Section Header
+        lbl_update_title = ctk.CTkLabel(frame, text="Cập Nhật Ứng Dụng (Auto-Update)", font=ctk.CTkFont(size=16, weight="bold"))
+        lbl_update_title.grid(row=10, column=0, columnspan=2, sticky="w", padx=15, pady=(0, 10))
+
+        # Current Version
+        ctk.CTkLabel(frame, text="Phiên bản hiện tại:", font=ctk.CTkFont(weight="bold")).grid(row=11, column=0, padx=15, pady=6, sticky="w")
+        lbl_ver = ctk.CTkLabel(frame, text=f"v{APP_VERSION}  (GitHub: {GITHUB_REPO})", font=ctk.CTkFont(size=13), text_color="#3498db")
+        lbl_ver.grid(row=11, column=1, padx=15, pady=6, sticky="w")
+
+        # Startup check switch
+        ctk.CTkLabel(frame, text="Tự động kiểm tra:", font=ctk.CTkFont(weight="bold")).grid(row=12, column=0, padx=15, pady=6, sticky="w")
+        self.switch_check_update = ctk.CTkSwitch(
+            frame, text="Tự động kiểm tra bản mới khi khởi động ứng dụng",
+            command=self._toggle_update_startup
+        )
+        if getattr(self.config, "check_update_on_startup", True):
+            self.switch_check_update.select()
+        else:
+            self.switch_check_update.deselect()
+        self.switch_check_update.grid(row=12, column=1, padx=15, pady=6, sticky="w")
+
+        # Check update button & status
+        self.btn_check_update = ctk.CTkButton(
+            frame, text="🔍 Kiểm Tra Cập Nhật", height=34, width=170,
+            command=self._check_update_manual
+        )
+        self.btn_check_update.grid(row=13, column=0, padx=15, pady=10, sticky="w")
+
+        self.lbl_update_status = ctk.CTkLabel(frame, text="", font=ctk.CTkFont(size=12))
+        self.lbl_update_status.grid(row=13, column=1, padx=15, pady=10, sticky="w")
 
         return frame
+
+    def _toggle_update_startup(self):
+        self.config.check_update_on_startup = bool(self.switch_check_update.get())
+        save_config(self.config)
+
+    def _check_update_background(self):
+        try:
+            rel = self.updater.check_for_update()
+            if rel:
+                self.after(0, lambda: self._show_update_dialog(rel))
+        except Exception as e:
+            print(f"[Update Startup] {e}")
+
+    def _check_update_manual(self):
+        self.btn_check_update.configure(state="disabled")
+        self.lbl_update_status.configure(text="Đang kết nối GitHub Releases...", text_color="#f39c12")
+
+        def _worker():
+            try:
+                rel = self.updater.check_for_update()
+                if rel:
+                    self.after(0, lambda: [
+                        self.btn_check_update.configure(state="normal"),
+                        self.lbl_update_status.configure(text=f"Đã có bản mới {rel['tag_name']}!", text_color="#2ecc71"),
+                        self._show_update_dialog(rel)
+                    ])
+                else:
+                    self.after(0, lambda: [
+                        self.btn_check_update.configure(state="normal"),
+                        self.lbl_update_status.configure(text=f"✓ Bạn đang dùng phiên bản mới nhất (v{APP_VERSION})!", text_color="#2ecc71"),
+                        messagebox.showinfo("Cập nhật", f"Ứng dụng đang ở phiên bản mới nhất (v{APP_VERSION})!")
+                    ])
+            except Exception as e:
+                self.after(0, lambda: [
+                    self.btn_check_update.configure(state="normal"),
+                    self.lbl_update_status.configure(text=f"Lỗi kiểm tra: {e}", text_color="red"),
+                    messagebox.showerror("Lỗi", f"Không thể kiểm tra bản cập nhật:\n{e}")
+                ])
+
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _show_update_dialog(self, release_info: dict):
+        tag = release_info.get("tag_name", "")
+        rel_name = release_info.get("name") or tag
+        body = release_info.get("body", "Không có mô tả chi tiết.")
+        download_url = release_info.get("download_url")
+        asset_name = release_info.get("asset_name") or f"AssignmentFixer-{tag}.zip"
+        size_bytes = release_info.get("asset_size", 0)
+        size_mb = size_bytes / (1024 * 1024) if size_bytes else 0
+
+        dialog = ctk.CTkToplevel(self)
+        dialog.title("Cập Nhật Ứng Dụng — AssignmentFixer")
+        dialog.geometry("540x510")
+        dialog.resizable(False, False)
+        dialog.transient(self)
+        dialog.grab_set()
+
+        # Header
+        lbl_title = ctk.CTkLabel(
+            dialog,
+            text=f"🎉 Đã có bản cập nhật mới: {tag}!",
+            font=ctk.CTkFont(size=18, weight="bold")
+        )
+        lbl_title.pack(padx=20, pady=(20, 5))
+
+        size_text = f" • Dung lượng: ~{size_mb:.1f} MB" if size_mb > 0 else ""
+        lbl_sub = ctk.CTkLabel(
+            dialog,
+            text=f"Hiện tại: v{APP_VERSION}  →  Mới nhất: {tag}{size_text}",
+            font=ctk.CTkFont(size=13),
+            text_color="gray"
+        )
+        lbl_sub.pack(padx=20, pady=(0, 10))
+
+        # Changelog Textbox
+        lbl_notes = ctk.CTkLabel(dialog, text="Nội dung bản phát hành (Changelog):", font=ctk.CTkFont(weight="bold"))
+        lbl_notes.pack(anchor="w", padx=25, pady=(5, 2))
+
+        txt_notes = ctk.CTkTextbox(dialog, height=180)
+        txt_notes.pack(fill="x", padx=25, pady=(0, 10))
+        txt_notes.insert("1.0", body)
+        txt_notes.configure(state="disabled")
+
+        # Progress Bar & Status
+        prog_bar = ctk.CTkProgressBar(dialog)
+        prog_bar.set(0)
+        prog_bar.pack(fill="x", padx=25, pady=(5, 5))
+        prog_bar.pack_forget()
+
+        lbl_dl_status = ctk.CTkLabel(dialog, text="", font=ctk.CTkFont(size=12))
+        lbl_dl_status.pack(padx=25, pady=(0, 5))
+
+        # Action Buttons
+        btn_frame = ctk.CTkFrame(dialog, fg_color="transparent")
+        btn_frame.pack(fill="x", padx=25, pady=(10, 20))
+
+        def on_start_update():
+            if not download_url:
+                messagebox.showerror("Lỗi", "Không tìm thấy link tải tệp cập nhật trong Release này!")
+                return
+            btn_update.configure(state="disabled", text="Đang tải về...")
+            btn_later.configure(state="disabled")
+            prog_bar.pack(fill="x", padx=25, pady=(5, 5))
+
+            def _download_and_apply():
+                temp_zip = Path(self.config.gdrive_data_dir) / "temp" / f"update_{tag}.zip"
+                temp_zip.parent.mkdir(parents=True, exist_ok=True)
+
+                def _prog(dl, total):
+                    if total > 0:
+                        pct = dl / total
+                        mb_dl = dl / (1024 * 1024)
+                        mb_tot = total / (1024 * 1024)
+                        dialog.after(0, lambda: [
+                            prog_bar.set(pct),
+                            lbl_dl_status.configure(text=f"Đang tải: {mb_dl:.1f}/{mb_tot:.1f} MB ({int(pct*100)}%)...")
+                        ])
+
+                success = self.updater.download_update(download_url, str(temp_zip), _prog)
+                if not success:
+                    dialog.after(0, lambda: [
+                        messagebox.showerror("Lỗi", "Tải bản cập nhật thất bại. Vui lòng kiểm tra lại kết nối mạng!"),
+                        btn_update.configure(state="normal", text="Thử lại"),
+                        btn_later.configure(state="normal")
+                    ])
+                    return
+
+                dialog.after(0, lambda: lbl_dl_status.configure(text="Tải xong! Đang giải nén và khởi động lại..."))
+                ok = self.updater.launch_update_script(str(temp_zip))
+                if ok:
+                    dialog.after(1200, lambda: [dialog.destroy(), self.destroy(), sys.exit(0)])
+                else:
+                    dialog.after(0, lambda: [
+                        messagebox.showerror("Lỗi", "Không thể kích hoạt tiến trình cập nhật. Vui lòng thử lại!"),
+                        btn_update.configure(state="normal", text="Cập nhật"),
+                        btn_later.configure(state="normal")
+                    ])
+
+            threading.Thread(target=_download_and_apply, daemon=True).start()
+
+        btn_update = ctk.CTkButton(btn_frame, text="🚀 Cập Nhật & Khởi Động Lại", command=on_start_update)
+        btn_update.pack(side="right", padx=(10, 0))
+
+        btn_later = ctk.CTkButton(btn_frame, text="Để Sau", fg_color="gray40", hover_color="gray50", command=dialog.destroy)
+        btn_later.pack(side="right")
 
     def _save_settings(self):
         p_val = self.combo_provider.get()
