@@ -1,0 +1,65 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Byte-compiled / optimized / DLL files
+*.dll
+*.pyd
+
+# Word Documents & PDFs (Không commit tài liệu học tập, bài làm và đề bài)
+*.docx
+*.doc
+*.docm
+*.dotx
+*.dotm
+*.pdf
+*.rtf
+
+# Student Papers and Briefs directories
+Chưa sửa/
+Sửa rồi/
+Đề bài/
+[Cc]hưa [Ss]ửa/
+[Ss]ửa [Rr]ồi/
+[Đđ]ề [Bb]ài/
+
+# Output directories & Temporary data
+data/outputs/
+data/temp/
+*.log
+
+# Sensitive credentials and local machine configurations
+local_config.json
+.env
+*.key
+*.pem
+
+# IDEs and OS
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db

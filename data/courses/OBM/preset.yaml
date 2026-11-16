@@ -1,0 +1,36 @@
+course_code: OBM
+course_name: Organizational Behaviour and Management
+unit_title: 'Unit: Organizational Behaviour'
+program: BTEC Higher National Diploma in Business (RQF) - ISME NEU
+formatting:
+  font_family: Times New Roman
+  font_size_body: 12
+  font_size_h1: 14
+  font_size_h2: 13
+  font_size_h3: 12
+  line_spacing: 1.5
+  space_after: 6
+  margins:
+    top: 2.54
+    bottom: 2.54
+    left: 2.54
+    right: 2.54
+  citation_style: HARVARD
+  require_table_of_contents: true
+  require_executive_summary_or_intro: true
+assessment_criteria:
+- id: D3
+  tier: Distinction
+  description: Make justified recommendations on how power, politics and culture can
+    be used effectively to influence and direct employee behaviour towards the accomplishment
+    of organizational goals
+- id: M4
+  tier: Merit
+  description: Evaluate how the operation of power, politics and culture affect employee
+    behavior and the accomplishment of organizational goals. Backup your arguments
+    with relevant information
+- id: P6
+  tier: Pass
+  description: Examine how the operation of power, politics and culture in an organization
+    affect employee behaviour and the accomplishment of organizational goals. Provide
+    evidence to backup your ideas

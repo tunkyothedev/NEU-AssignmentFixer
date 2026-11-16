@@ -1,0 +1,60 @@
+course_code: MSBP
+course_name: Management and Strategic Business Project
+unit_title: 'Unit: MSBP'
+program: BTEC Higher National Diploma in Business (RQF) - ISME NEU
+formatting:
+  font_family: Times New Roman
+  font_size_body: 12
+  font_size_h1: 14
+  font_size_h2: 13
+  font_size_h3: 12
+  line_spacing: 1.5
+  space_after: 6
+  margins:
+    top: 2.54
+    bottom: 2.54
+    left: 2.54
+    right: 2.54
+  citation_style: HARVARD
+  require_table_of_contents: true
+  require_executive_summary_or_intro: true
+assessment_criteria:
+- id: D1
+  tier: Distinction
+  description: Critically evaluate the project-management
+- id: D2
+  tier: Distinction
+  description: Justify the choices made in the design of the PMP for completing the
+    aims and objectives of the project
+- id: M1
+  tier: Merit
+  description: Evaluate the stages of the PLC and the factors, (deliverables, quality,
+    risk, communication and resources) to be considered in a PMP
+- id: M2
+  tier: Merit
+  description: Evaluate a range of research methods and strategies for gathering information
+    and data collection
+- id: M3
+  tier: Merit
+  description: Produce a detailed PMP, and schedule for monitoring and completing
+    the aims and objectives of the project
+- id: P1
+  tier: Pass
+  description: Explain the stages of the project lifecycle (PLC) and their importance
+    to the success of a project
+- id: P2
+  tier: Pass
+  description: Examine the factors to be considered when compiling a project management
+    plan (PMP)
+- id: P3
+  tier: Pass
+  description: Examine a range of research methods and strategies and their importance
+    for gathering information and data collection
+- id: P4
+  tier: Pass
+  description: Produce a PMP that covers, aim, objectives, deliverables, quality,
+    risk, communication resources and research methods
+- id: P5
+  tier: Pass
+  description: Produce a work breakdown structure and a schedule to provide timeframes
+    and stages for completion

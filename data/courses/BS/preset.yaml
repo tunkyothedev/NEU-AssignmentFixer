@@ -1,0 +1,66 @@
+course_code: BS
+course_name: Business Strategy
+unit_title: 'Unit 43: Business Strategy (RQF Level 5)'
+program: BTEC Higher National Diploma in Business (RQF) - ISME NEU
+formatting:
+  font_family: Times New Roman
+  font_size_body: 12
+  font_size_h1: 14
+  font_size_h2: 13
+  font_size_h3: 12
+  line_spacing: 1.5
+  space_after: 6
+  margins:
+    top: 2.54
+    bottom: 2.54
+    left: 2.54
+    right: 2.54
+  citation_style: HARVARD
+  require_table_of_contents: true
+  require_executive_summary_or_intro: true
+assessment_criteria:
+- id: D1
+  tier: Distinction
+  description: Create a set of valid strategic directions, objectives and tactical
+    actions for successfully achieving strategic alignment, based on critical interpretation
+    of internal and external data, and information
+- id: M1
+  tier: Merit
+  description: Critically analyse the macro environment to determine and inform strategic
+    management decisions
+- id: M2
+  tier: Merit
+  description: Interpret information and data to assess strengths and weaknesses of
+    an organisation’s internal capabilities, structure and skill set
+- id: M3
+  tier: Merit
+  description: Justify use of an appropriate strategic management tool for a given
+    market sector, to inform strategy and strategic objectives for an organisation
+- id: M4
+  tier: Merit
+  description: Produce a strategic management plan that has tangible and tactical
+    strategic priorities and objectives
+- id: P1
+  tier: Pass
+  description: Applying appropriate frameworks, analyse the impact and influence of
+    the macro environment on a given organisation and its strategies
+- id: P2
+  tier: Pass
+  description: Conduct an internal environment and capabilities assessment of a given
+    organisation using appropriate frameworks
+- id: P3
+  tier: Pass
+  description: Determine appropriate management tools to analyse a given market sector
+    for an organisation and inform strategy
+- id: P4
+  tier: Pass
+  description: Devise appropriate strategic objectives, based on the outcomes of analysis
+    for an organisation to inform strategy
+- id: P5
+  tier: Pass
+  description: Apply a range of models, concepts or theories to interpret and devise
+    strategic planning for a given organisation
+- id: P6
+  tier: Pass
+  description: Design a strategic management plan, applying appropriate strategies
+    to improve competitive edge and market position based on the outcomes

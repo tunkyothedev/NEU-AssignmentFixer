@@ -1,0 +1,61 @@
+course_code: SFM
+course_name: Skills for Management / Strategic Financial Management
+unit_title: 'Unit: SFM'
+program: BTEC Higher National Diploma in Business (RQF) - ISME NEU
+formatting:
+  font_family: Times New Roman
+  font_size_body: 12
+  font_size_h1: 14
+  font_size_h2: 13
+  font_size_h3: 12
+  line_spacing: 1.5
+  space_after: 6
+  margins:
+    top: 2.54
+    bottom: 2.54
+    left: 2.54
+    right: 2.54
+  citation_style: HARVARD
+  require_table_of_contents: true
+  require_executive_summary_or_intro: true
+assessment_criteria:
+- id: D1
+  tier: Distinction
+  description: Critically evaluate the differences in application between methods
+    of descriptive, exploratory and confirmatory analysis of business and economic
+    data
+- id: D3
+  tier: Distinction
+  description: Justify the rationale for choosing the method of communication
+- id: M1
+  tier: Merit
+  description: Critically evaluate the methods of analysis used to present business
+    and economic data/information from a range of different published sources
+- id: M2
+  tier: Merit
+  description: Evaluate the differences in application between descriptive statistics,
+    inferential statistics and measuring association
+- id: M4
+  tier: Merit
+  description: Evaluate the use of different types of charts and tables for effectively
+    communicating findings for given variables
+- id: P1
+  tier: Pass
+  description: Evaluate the nature and process of business and economic data/information
+    from a range of different published sources
+- id: P2
+  tier: Pass
+  description: Evaluate data from a variety of sources, using different methods of
+    analysis
+- id: P3
+  tier: Pass
+  description: Analyse and evaluate qualitative and quantitative raw business data
+    from a range of examples, using appropriate statistical methods
+- id: P5
+  tier: Pass
+  description: Assess different types of visual representations for communicating
+    findings effectively
+- id: P6
+  tier: Pass
+  description: Using appropriate charts and tables, communicate findings for given
+    variables effectively
