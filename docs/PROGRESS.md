@@ -75,3 +75,13 @@ Tài liệu này ghi lại chi tiết các cột mốc, trạng thái hoàn thà
 1. Nhấp đúp vào tệp [`run_app.bat`](file:///E:/AssignmentFixer/run_app.bat) để mở giao diện ứng dụng.
 2. Chọn bài làm sinh viên và đề bài rubric, sau đó bấm **Bắt đầu sửa bài**.
 3. Bạn sẽ thấy thanh log hiển thị chi tiết tiến trình từng bước `[3.1]`, `[3.2]`, `[3.3]`, `[3.4]`, `[3.5]` và tự động hoàn thành trong tích tắc!
+
+---
+
+## 6. Trạng Thái Kho Chứa Mã Nguồn (GitHub)
+- **Repository:** [https://github.com/tunkyothedev/NEU-AssignmentFixer](https://github.com/tunkyothedev/NEU-AssignmentFixer)
+- **Branch:** `main` (Tracking `origin/main`)
+- **Chính sách bảo mật:**
+  + Tệp `.gitignore` đã loại trừ toàn bộ tài liệu Word (`*.docx`, `*.doc`), bài làm sinh viên (`Chưa sửa/`, `Sửa rồi/`), đề bài (`Đề bài/`) và tệp xuất kết quả (`data/outputs/`).
+  + Loại trừ khóa bảo mật và cấu hình cục bộ (`local_config.json`).
+  + Cung cấp tệp mẫu [`local_config.example.json`](file:///E:/AssignmentFixer/local_config.example.json) sạch chuẩn cho cộng tác viên.
