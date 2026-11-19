@@ -20,6 +20,26 @@ class GeminiCLIProvider(LLMProviderInterface):
         self.timeout_sec = timeout_sec
 
     def _call_cli(self, prompt: str) -> str:
+        import shutil
+        cli_available = (
+            shutil.which(self.cli_cmd) or
+            (os.name == "nt" and (
+                shutil.which(f"{self.cli_cmd}.cmd") or
+                shutil.which(f"{self.cli_cmd}.exe") or
+                shutil.which("gemini.cmd") or
+                shutil.which("gemini")
+            ))
+        )
+        if not cli_available:
+            raise RuntimeError(
+                f"Không tìm thấy công cụ Gemini CLI ('{self.cli_cmd}') trên máy tính này.\n\n"
+                "Máy tính của bạn chưa cài đặt Node.js / Gemini CLI.\n"
+                "Giải pháp dễ nhất:\n"
+                "1. Vào tab 'Cài Đặt Hệ Thống' -> Dán Gemini API Key (lấy miễn phí tại: https://aistudio.google.com/apikey)\n"
+                "2. Hoặc chuyển Nhà cung cấp AI sang 'KiraAI (API Key)'\n"
+                "3. Hoặc nếu muốn dùng CLI: Cài Node.js rồi mở CMD chạy: npm install -g @google/gemini-cli"
+            )
+
         # Chạy trong thư mục cô lập để tránh CLI đọc mã nguồn
         try:
             from app.config import BASE_DIR

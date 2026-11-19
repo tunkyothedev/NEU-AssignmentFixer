@@ -91,6 +91,13 @@ Tài liệu này ghi lại chi tiết các cột mốc, trạng thái hoàn thà
     + Cập nhật `package_release.py`: Loại trừ hoàn toàn `local_config.json` khỏi tệp ZIP phát hành để không ghi đè cấu hình ổ đĩa máy của người phát triển sang máy người dùng khác.
   - **Kiểm thử thực tế thành công:** Tệp ZIP mới `AssignmentFixer-v1.0.2-windows.zip` được xác thực 100% không chứa `local_config.json`, tự động tương thích trên mọi máy tính (C:, D:, USB...).
 
+- **Khắc phục lỗi "gemini.cli not recognized" trên máy người dùng khác & Bổ sung cổng Gemini API trực tiếp:**
+  - **Nguyên nhân:** Máy của người dùng phổ thông không cài sẵn Node.js và gói dòng lệnh `gemini-cli`. Khi ứng dụng chạy với cấu hình `gemini_cli`, hệ điều hành Windows ném ra lỗi lệnh `gemini.cmd` không được nhận diện.
+  - **Khắc phục:**
+    + Cập nhật [`app/llm/gemini_cli.py`](file:///E:/AssignmentFixer/app/llm/gemini_cli.py): Kiểm tra `shutil.which` trước khi thực thi lệnh; nếu thiếu CLI, hiển thị hộp thoại hướng dẫn chi tiết bằng tiếng Việt thay vì lỗi crash hệ thống.
+    + Tích hợp **Google Gemini Direct REST API** (`gemini_api`): Gọi trực tiếp endpoint chuẩn OpenAI của Google AI Studio (`https://generativelanguage.googleapis.com/v1beta/openai`) qua HTTPS; bất kỳ người dùng nào chỉ cần dán Gemini API Key miễn phí (lấy tại Google AI Studio) là ứng dụng chạy mượt 100% trên mọi máy tính mà không cần cài Node.js hay bất kỳ công cụ dòng lệnh nào.
+    + Thêm tùy chọn *"Google Gemini (Trực tiếp qua API Key - Khuyên dùng)"* vào giao diện Cài Đặt Hệ Thống và tự động định tuyến thông minh.
+
 ---
 
 ## 5. Hướng Dẫn Sử Dụng

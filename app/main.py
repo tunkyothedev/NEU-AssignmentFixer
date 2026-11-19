@@ -43,7 +43,31 @@ class AssignmentFixerApp(ctk.CTk):
     def _init_provider(self):
         if self.config.default_provider == "gemini_cli":
             cli_cmd = self.config.gemini_cli_path or "gemini.cmd"
-            self.provider = GeminiCLIProvider(cli_cmd=cli_cmd, api_key=self.config.gemini_api_key)
+            import shutil
+            cli_available = (
+                shutil.which(cli_cmd) or
+                (os.name == "nt" and (
+                    shutil.which(f"{cli_cmd}.cmd") or
+                    shutil.which(f"{cli_cmd}.exe") or
+                    shutil.which("gemini.cmd") or
+                    shutil.which("gemini")
+                ))
+            )
+            # Tự động chuyển sang gọi trực tiếp Google AI Studio REST API qua HTTPS nếu máy chưa cài CLI nhưng có API Key
+            if not cli_available and self.config.gemini_api_key:
+                self.provider = OpenAICompatibleProvider(
+                    api_key=self.config.gemini_api_key,
+                    base_url="https://generativelanguage.googleapis.com/v1beta/openai",
+                    model="gemini-2.0-flash"
+                )
+            else:
+                self.provider = GeminiCLIProvider(cli_cmd=cli_cmd, api_key=self.config.gemini_api_key)
+        elif self.config.default_provider == "gemini_api":
+            self.provider = OpenAICompatibleProvider(
+                api_key=self.config.gemini_api_key,
+                base_url="https://generativelanguage.googleapis.com/v1beta/openai",
+                model="gemini-2.0-flash"
+            )
         else:
             self.provider = OpenAICompatibleProvider(
                 api_key=self.config.kira_api_key,
@@ -401,11 +425,21 @@ class AssignmentFixerApp(ctk.CTk):
 
         # Provider Selection
         ctk.CTkLabel(frame, text="Nhà cung cấp AI (Provider):", font=ctk.CTkFont(weight="bold")).grid(row=1, column=0, padx=15, pady=10, sticky="w")
-        current_p_name = "Google AI Pro (Gemini CLI)" if self.config.default_provider == "gemini_cli" else "KiraAI (API Key)"
+        if self.config.default_provider == "gemini_api":
+            current_p_name = "Google Gemini (Trực tiếp qua API Key - Khuyên dùng)"
+        elif self.config.default_provider == "gemini_cli":
+            current_p_name = "Google AI Pro (Gemini CLI - Cần cài đặt)"
+        else:
+            current_p_name = "KiraAI (API Key)"
+
         self.combo_provider = ctk.CTkOptionMenu(
             frame,
-            values=["Google AI Pro (Gemini CLI)", "KiraAI (API Key)"],
-            width=300
+            values=[
+                "Google Gemini (Trực tiếp qua API Key - Khuyên dùng)",
+                "Google AI Pro (Gemini CLI - Cần cài đặt)",
+                "KiraAI (API Key)"
+            ],
+            width=380
         )
         self.combo_provider.set(current_p_name)
         self.combo_provider.grid(row=1, column=1, padx=15, pady=10, sticky="w")
@@ -637,8 +671,10 @@ class AssignmentFixerApp(ctk.CTk):
 
     def _save_settings(self):
         p_val = self.combo_provider.get()
-        if "Google AI Pro" in p_val:
+        if "CLI" in p_val:
             self.config.default_provider = "gemini_cli"
+        elif "Gemini" in p_val:
+            self.config.default_provider = "gemini_api"
         else:
             self.config.default_provider = "kira_api"
 
