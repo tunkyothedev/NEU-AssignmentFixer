@@ -30,21 +30,51 @@ class OpenAICompatibleProvider(LLMProviderInterface):
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json"
         }
-        payload = {
-            "model": self.model,
-            "messages": messages,
-            "temperature": temperature
-        }
 
-        response = requests.post(url, headers=headers, json=payload, timeout=self.timeout_sec)
-        if response.status_code != 200:
-            raise RuntimeError(f"API Error ({response.status_code}): {response.text}")
+        # Danh sách model dự phòng thông minh khi gặp 503 (High demand) hoặc 404 (Not found)
+        models_to_try = [self.model]
+        if "generativelanguage.googleapis.com" in self.base_url:
+            for alt in ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-3.1-flash-lite", "gemini-3.8-flash"]:
+                if alt not in models_to_try:
+                    models_to_try.append(alt)
 
-        data = response.json()
-        try:
-            return data["choices"][0]["message"]["content"]
-        except (KeyError, IndexError):
-            raise RuntimeError(f"Unexpected response format from API: {data}")
+        last_error = ""
+        import time
+        for m in models_to_try:
+            payload = {
+                "model": m,
+                "messages": messages,
+                "temperature": temperature
+            }
+
+            # Thử lại nếu gặp 503 (quá tải tạm thời) hoặc 429 (nghẽn tần suất)
+            for attempt in range(2):
+                try:
+                    response = requests.post(url, headers=headers, json=payload, timeout=self.timeout_sec)
+                    if response.status_code == 200:
+                        data = response.json()
+                        self.model = m  # Ghi nhớ model đang hoạt động mượt mà
+                        try:
+                            return data["choices"][0]["message"]["content"]
+                        except (KeyError, IndexError):
+                            raise RuntimeError(f"Unexpected response format from API: {data}")
+
+                    # Nếu gặp lỗi 503 quá tải, chờ 2.5s rồi thử lại
+                    if response.status_code in (503, 429) and attempt == 0:
+                        time.sleep(2.5)
+                        continue
+
+                    last_error = f"API Error ({response.status_code}): {response.text}"
+                    if response.status_code in (503, 404):
+                        # Chuyển sang model tiếp theo trong danh sách dự phòng
+                        break
+                    else:
+                        raise RuntimeError(last_error)
+                except requests.exceptions.RequestException as e:
+                    last_error = str(e)
+                    break
+
+        raise RuntimeError(last_error or "Không thể kết nối đến máy chủ AI.")
 
     def evaluate_paper(
         self,

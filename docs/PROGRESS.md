@@ -102,6 +102,11 @@ Tài liệu này ghi lại chi tiết các cột mốc, trạng thái hoàn thà
   - **Khắc phục:**
     + Cập nhật mặc định model Google Gemini REST API sang **`gemini-3.8-flash`** trong [`app/config.py`](file:///E:/AssignmentFixer/app/config.py) và [`app/main.py`](file:///E:/AssignmentFixer/app/main.py).
     + Bổ sung ô nhập tùy chỉnh `Model Gemini (Google AI)` trong giao diện Cài Đặt Hệ Thống để người dùng linh hoạt đổi model theo nhu cầu.
+- **Khắc phục lỗi 503 High Demand bằng cơ chế Tự động Thử lại (Retry) & Chuyển Model Dự Phòng (Model Fallback):**
+  - **Nguyên nhân:** Model preview `gemini-3.8-flash` thường xuyên bị quá tải tạm thời từ máy chủ Google AI Studio (lỗi HTTP 503: *"This model is currently experiencing high demand. Spikes in demand are usually temporary"*).
+  - **Khắc phục:**
+    + Cập nhật mặc định sang model **`gemini-2.5-flash`** (dòng model sản xuất ổn định, tốc độ phản hồi cực nhanh 1-2s và không bị nghẽn tải).
+    + Nâng cấp [`app/llm/openai_compatible.py`](file:///E:/AssignmentFixer/app/llm/openai_compatible.py): Thêm cơ chế tự động thử lại sau 2.5s khi gặp 503/429, đồng thời tự động đảo qua chuỗi model dự phòng (`gemini-2.5-flash` -> `gemini-1.5-flash` -> `gemini-3.1-flash-lite` -> `gemini-3.8-flash`) nếu một model bất kỳ bị quá tải hoặc ngừng cung cấp. Ứng dụng tự động ghi nhớ model phản hồi tốt để tiếp tục làm việc mà không làm gián đoạn người dùng.
 
 ---
 

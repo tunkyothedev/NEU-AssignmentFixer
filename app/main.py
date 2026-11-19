@@ -53,7 +53,7 @@ class AssignmentFixerApp(ctk.CTk):
                     shutil.which("gemini")
                 ))
             )
-            g_model = getattr(self.config, "gemini_model", "gemini-3.8-flash") or "gemini-3.8-flash"
+            g_model = getattr(self.config, "gemini_model", "gemini-2.5-flash") or "gemini-2.5-flash"
             # Tự động chuyển sang gọi trực tiếp Google AI Studio REST API qua HTTPS nếu máy chưa cài CLI nhưng có API Key
             if not cli_available and self.config.gemini_api_key:
                 self.provider = OpenAICompatibleProvider(
@@ -64,7 +64,7 @@ class AssignmentFixerApp(ctk.CTk):
             else:
                 self.provider = GeminiCLIProvider(cli_cmd=cli_cmd, api_key=self.config.gemini_api_key)
         elif self.config.default_provider == "gemini_api":
-            g_model = getattr(self.config, "gemini_model", "gemini-3.8-flash") or "gemini-3.8-flash"
+            g_model = getattr(self.config, "gemini_model", "gemini-2.5-flash") or "gemini-2.5-flash"
             self.provider = OpenAICompatibleProvider(
                 api_key=self.config.gemini_api_key,
                 base_url="https://generativelanguage.googleapis.com/v1beta/openai",
@@ -462,7 +462,7 @@ class AssignmentFixerApp(ctk.CTk):
         ctk.CTkLabel(frame, text="Model Gemini (Google AI):", font=ctk.CTkFont(weight="bold")).grid(row=4, column=0, padx=15, pady=8, sticky="w")
         self.entry_gemini_model = ctk.CTkEntry(frame, width=250)
         self.entry_gemini_model.grid(row=4, column=1, padx=15, pady=8, sticky="w")
-        self.entry_gemini_model.insert(0, getattr(self.config, "gemini_model", "gemini-3.8-flash") or "gemini-3.8-flash")
+        self.entry_gemini_model.insert(0, getattr(self.config, "gemini_model", "gemini-2.5-flash") or "gemini-2.5-flash")
 
         # Kira API Key
         ctk.CTkLabel(frame, text="KiraAI API Key:", font=ctk.CTkFont(weight="bold")).grid(row=5, column=0, padx=15, pady=8, sticky="w")
