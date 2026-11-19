@@ -1,6 +1,6 @@
 {
   "machine_id": "DEFAULT",
-  "gdrive_data_dir": "E:\\AssignmentFixer\\data",
+  "gdrive_data_dir": "./data",
   "default_provider": "gemini_cli",
   "kira_api_key": "",
   "kira_base_url": "https://kiraai.vn/api/v1",

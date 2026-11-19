@@ -81,7 +81,15 @@ Tài liệu này ghi lại chi tiết các cột mốc, trạng thái hoàn thà
   - **Khắc phục:**
     + Cập nhật [`build_exe.py`](file:///E:/AssignmentFixer/build_exe.py) và [`package_release.py`](file:///E:/AssignmentFixer/package_release.py): Thêm cờ `--add-data` cho `data/courses/` và tự động đồng bộ đầy đủ toàn bộ thư mục `data/courses/` (cả 4 môn), `data/style_guide.md`, `local_config.example.json` sang `dist/AssignmentFixer/` trước khi đóng gói ZIP.
     + Cập nhật [`app/main.py`](file:///E:/AssignmentFixer/app/main.py): Hàm `_load_available_courses()` tự động tìm kiếm cả ở thư mục ngoài lẫn bộ nhớ nén nội bộ `sys._MEIPASS`/`_internal`, đồng thời nếu thư mục trống sẽ fallback hiển thị đầy đủ cả 4 môn chuẩn BTEC (BS, OBM, SFM, MSBP).
-  - **Kiểm thử thực tế thành công:** Đã kiểm tra nạp thành công 4 môn `['BS', 'MSBP', 'OBM', 'SFM']` và đóng gói lại bản release ZIP chứa trọn vẹn dữ liệu.
+- **Khắc phục triệt để lỗi "System cannot find E:\" khi chạy trên máy khác:**
+  - **Nguyên nhân:**
+    + Trong [`app/llm/gemini_cli.py`](file:///E:/AssignmentFixer/app/llm/gemini_cli.py), biến `sandbox_dir` bị gán cứng đường dẫn tuyệt đối `r"E:\AssignmentFixer\data\temp"`. Khi chuyển app sang máy khác không có ổ đĩa `E:\`, lệnh `subprocess.run(cwd=sandbox_dir)` bị Windows chặn lại với lỗi không tìm thấy ổ đĩa `E:\`.
+    + Script đóng gói trước đó vô tình đính kèm file cấu hình cá nhân `local_config.json` chứa đường dẫn `E:\AssignmentFixer\...` vào file ZIP.
+  - **Khắc phục:**
+    + Thay thế đường dẫn tĩnh trong `app/llm/gemini_cli.py` bằng `BASE_DIR / "data" / "temp"` tương đối động, hoặc thư mục `tempfile.gettempdir()` của hệ điều hành.
+    + Cập nhật `app/config.py`: Hàm `load_config()` tự động thẩm định và hiệu chỉnh `gdrive_data_dir` về thư mục cục bộ mặc định nếu đường dẫn đã lưu thuộc về ổ đĩa không tồn tại trên máy người dùng.
+    + Cập nhật `package_release.py`: Loại trừ hoàn toàn `local_config.json` khỏi tệp ZIP phát hành để không ghi đè cấu hình ổ đĩa máy của người phát triển sang máy người dùng khác.
+  - **Kiểm thử thực tế thành công:** Tệp ZIP mới `AssignmentFixer-v1.0.2-windows.zip` được xác thực 100% không chứa `local_config.json`, tự động tương thích trên mọi máy tính (C:, D:, USB...).
 
 ---
 

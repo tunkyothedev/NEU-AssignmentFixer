@@ -33,14 +33,31 @@ class AppConfig(BaseModel):
     check_update_on_startup: bool = True
 
 def load_config() -> AppConfig:
+    cfg = None
     if CONFIG_FILE.exists():
         try:
             with open(CONFIG_FILE, "r", encoding="utf-8") as f:
                 data = json.load(f)
-            return AppConfig(**data)
+            cfg = AppConfig(**data)
         except Exception:
             pass
-    cfg = AppConfig()
+    if cfg is None:
+        cfg = AppConfig()
+
+    # Tự động thẩm định và hiệu chỉnh gdrive_data_dir để tránh lỗi ổ đĩa khác máy (vd: E:\ sang máy không có E:\)
+    default_data_dir = str(BASE_DIR / "data")
+    if not cfg.gdrive_data_dir:
+        cfg.gdrive_data_dir = default_data_dir
+    else:
+        try:
+            p = Path(cfg.gdrive_data_dir)
+            if not p.is_absolute():
+                cfg.gdrive_data_dir = str((BASE_DIR / p).resolve())
+            elif not p.exists():
+                cfg.gdrive_data_dir = default_data_dir
+        except Exception:
+            cfg.gdrive_data_dir = default_data_dir
+
     save_config(cfg)
     return cfg
 

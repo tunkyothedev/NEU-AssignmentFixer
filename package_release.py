@@ -57,6 +57,9 @@ def package():
     with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
         for root, dirs, files in os.walk(dist_dir):
             for file in files:
+                # Không bao giờ đóng gói file cấu hình cục bộ của máy build vào file zip phát hành
+                if file.lower() == "local_config.json":
+                    continue
                 full_path = Path(root) / file
                 rel_path = full_path.relative_to(dist_dir)
                 zf.write(full_path, arcname=str(rel_path))

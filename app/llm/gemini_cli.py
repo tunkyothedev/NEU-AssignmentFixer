@@ -2,6 +2,7 @@ import subprocess
 import json
 import os
 import re
+import tempfile
 from typing import List, Dict, Any
 from app.llm.base import LLMProviderInterface, EvaluationReport, ChunkEdit
 
@@ -20,7 +21,11 @@ class GeminiCLIProvider(LLMProviderInterface):
 
     def _call_cli(self, prompt: str) -> str:
         # Chạy trong thư mục cô lập để tránh CLI đọc mã nguồn
-        sandbox_dir = r"E:\AssignmentFixer\data\temp"
+        try:
+            from app.config import BASE_DIR
+            sandbox_dir = str(BASE_DIR / "data" / "temp")
+        except Exception:
+            sandbox_dir = os.path.join(tempfile.gettempdir(), "AssignmentFixer_temp")
         os.makedirs(sandbox_dir, exist_ok=True)
 
         cmd = [
