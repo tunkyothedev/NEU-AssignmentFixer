@@ -25,9 +25,10 @@ class AppConfig(BaseModel):
     kira_base_url: str = "https://kiraai.vn/api/v1"
     kira_model: str = "gemini-2.5-pro"
     
-    # Gemini CLI settings (Alternative)
+    # Gemini CLI & API settings (Alternative)
     gemini_cli_path: str = "gemini"
     gemini_api_key: str = ""
+    gemini_model: str = "gemini-3.8-flash"
     
     auto_open_word: bool = True
     check_update_on_startup: bool = True

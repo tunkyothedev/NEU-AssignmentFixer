@@ -53,20 +53,22 @@ class AssignmentFixerApp(ctk.CTk):
                     shutil.which("gemini")
                 ))
             )
+            g_model = getattr(self.config, "gemini_model", "gemini-3.8-flash") or "gemini-3.8-flash"
             # Tự động chuyển sang gọi trực tiếp Google AI Studio REST API qua HTTPS nếu máy chưa cài CLI nhưng có API Key
             if not cli_available and self.config.gemini_api_key:
                 self.provider = OpenAICompatibleProvider(
                     api_key=self.config.gemini_api_key,
                     base_url="https://generativelanguage.googleapis.com/v1beta/openai",
-                    model="gemini-2.0-flash"
+                    model=g_model
                 )
             else:
                 self.provider = GeminiCLIProvider(cli_cmd=cli_cmd, api_key=self.config.gemini_api_key)
         elif self.config.default_provider == "gemini_api":
+            g_model = getattr(self.config, "gemini_model", "gemini-3.8-flash") or "gemini-3.8-flash"
             self.provider = OpenAICompatibleProvider(
                 api_key=self.config.gemini_api_key,
                 base_url="https://generativelanguage.googleapis.com/v1beta/openai",
-                model="gemini-2.0-flash"
+                model=g_model
             )
         else:
             self.provider = OpenAICompatibleProvider(
@@ -456,28 +458,34 @@ class AssignmentFixerApp(ctk.CTk):
         self.entry_gemini_api_key.grid(row=3, column=1, padx=15, pady=8, sticky="w")
         self.entry_gemini_api_key.insert(0, self.config.gemini_api_key or "")
 
+        # Gemini Model
+        ctk.CTkLabel(frame, text="Model Gemini (Google AI):", font=ctk.CTkFont(weight="bold")).grid(row=4, column=0, padx=15, pady=8, sticky="w")
+        self.entry_gemini_model = ctk.CTkEntry(frame, width=250)
+        self.entry_gemini_model.grid(row=4, column=1, padx=15, pady=8, sticky="w")
+        self.entry_gemini_model.insert(0, getattr(self.config, "gemini_model", "gemini-3.8-flash") or "gemini-3.8-flash")
+
         # Kira API Key
-        ctk.CTkLabel(frame, text="KiraAI API Key:", font=ctk.CTkFont(weight="bold")).grid(row=4, column=0, padx=15, pady=8, sticky="w")
+        ctk.CTkLabel(frame, text="KiraAI API Key:", font=ctk.CTkFont(weight="bold")).grid(row=5, column=0, padx=15, pady=8, sticky="w")
         self.entry_api_key = ctk.CTkEntry(frame, width=450)
-        self.entry_api_key.grid(row=4, column=1, padx=15, pady=8, sticky="w")
+        self.entry_api_key.grid(row=5, column=1, padx=15, pady=8, sticky="w")
         self.entry_api_key.insert(0, self.config.kira_api_key)
 
         # Base URL
-        ctk.CTkLabel(frame, text="API Base URL:", font=ctk.CTkFont(weight="bold")).grid(row=5, column=0, padx=15, pady=8, sticky="w")
+        ctk.CTkLabel(frame, text="API Base URL (Kira):", font=ctk.CTkFont(weight="bold")).grid(row=6, column=0, padx=15, pady=8, sticky="w")
         self.entry_base_url = ctk.CTkEntry(frame, width=450)
-        self.entry_base_url.grid(row=5, column=1, padx=15, pady=8, sticky="w")
+        self.entry_base_url.grid(row=6, column=1, padx=15, pady=8, sticky="w")
         self.entry_base_url.insert(0, self.config.kira_base_url)
 
-        # Model
-        ctk.CTkLabel(frame, text="Model AI:", font=ctk.CTkFont(weight="bold")).grid(row=6, column=0, padx=15, pady=8, sticky="w")
+        # Model Kira
+        ctk.CTkLabel(frame, text="Model KiraAI:", font=ctk.CTkFont(weight="bold")).grid(row=7, column=0, padx=15, pady=8, sticky="w")
         self.entry_model = ctk.CTkEntry(frame, width=250)
-        self.entry_model.grid(row=6, column=1, padx=15, pady=8, sticky="w")
+        self.entry_model.grid(row=7, column=1, padx=15, pady=8, sticky="w")
         self.entry_model.insert(0, self.config.kira_model)
 
         # GDrive Data dir
-        ctk.CTkLabel(frame, text="Thư mục Data / GDrive:", font=ctk.CTkFont(weight="bold")).grid(row=7, column=0, padx=15, pady=8, sticky="w")
+        ctk.CTkLabel(frame, text="Thư mục Data / GDrive:", font=ctk.CTkFont(weight="bold")).grid(row=8, column=0, padx=15, pady=8, sticky="w")
         self.entry_gdrive = ctk.CTkEntry(frame, width=450)
-        self.entry_gdrive.grid(row=7, column=1, padx=15, pady=8, sticky="w")
+        self.entry_gdrive.grid(row=8, column=1, padx=15, pady=8, sticky="w")
         self.entry_gdrive.insert(0, self.config.gdrive_data_dir)
 
         # Save Button
@@ -485,23 +493,23 @@ class AssignmentFixerApp(ctk.CTk):
             frame, text="Lưu Cấu Hình", height=38, width=150,
             command=self._save_settings
         )
-        btn_save_config.grid(row=8, column=1, sticky="w", padx=15, pady=15)
+        btn_save_config.grid(row=9, column=1, sticky="w", padx=15, pady=15)
 
         # Divider
         divider = ctk.CTkFrame(frame, height=2, fg_color="gray30")
-        divider.grid(row=9, column=0, columnspan=2, sticky="ew", padx=15, pady=(10, 15))
+        divider.grid(row=10, column=0, columnspan=2, sticky="ew", padx=15, pady=(10, 15))
 
         # Update Section Header
         lbl_update_title = ctk.CTkLabel(frame, text="Cập Nhật Ứng Dụng (Auto-Update)", font=ctk.CTkFont(size=16, weight="bold"))
-        lbl_update_title.grid(row=10, column=0, columnspan=2, sticky="w", padx=15, pady=(0, 10))
+        lbl_update_title.grid(row=11, column=0, columnspan=2, sticky="w", padx=15, pady=(0, 10))
 
         # Current Version
-        ctk.CTkLabel(frame, text="Phiên bản hiện tại:", font=ctk.CTkFont(weight="bold")).grid(row=11, column=0, padx=15, pady=6, sticky="w")
+        ctk.CTkLabel(frame, text="Phiên bản hiện tại:", font=ctk.CTkFont(weight="bold")).grid(row=12, column=0, padx=15, pady=6, sticky="w")
         lbl_ver = ctk.CTkLabel(frame, text=f"v{APP_VERSION}  (GitHub: {GITHUB_REPO})", font=ctk.CTkFont(size=13), text_color="#3498db")
-        lbl_ver.grid(row=11, column=1, padx=15, pady=6, sticky="w")
+        lbl_ver.grid(row=12, column=1, padx=15, pady=6, sticky="w")
 
         # Startup check switch
-        ctk.CTkLabel(frame, text="Tự động kiểm tra:", font=ctk.CTkFont(weight="bold")).grid(row=12, column=0, padx=15, pady=6, sticky="w")
+        ctk.CTkLabel(frame, text="Tự động kiểm tra:", font=ctk.CTkFont(weight="bold")).grid(row=13, column=0, padx=15, pady=6, sticky="w")
         self.switch_check_update = ctk.CTkSwitch(
             frame, text="Tự động kiểm tra bản mới khi khởi động ứng dụng",
             command=self._toggle_update_startup
@@ -510,17 +518,16 @@ class AssignmentFixerApp(ctk.CTk):
             self.switch_check_update.select()
         else:
             self.switch_check_update.deselect()
-        self.switch_check_update.grid(row=12, column=1, padx=15, pady=6, sticky="w")
-
+        self.switch_check_update.grid(row=13, column=1, padx=15, pady=6, sticky="w")
         # Check update button & status
         self.btn_check_update = ctk.CTkButton(
             frame, text="🔍 Kiểm Tra Cập Nhật", height=34, width=170,
             command=self._check_update_manual
         )
-        self.btn_check_update.grid(row=13, column=0, padx=15, pady=10, sticky="w")
+        self.btn_check_update.grid(row=14, column=0, padx=15, pady=10, sticky="w")
 
         self.lbl_update_status = ctk.CTkLabel(frame, text="", font=ctk.CTkFont(size=12))
-        self.lbl_update_status.grid(row=13, column=1, padx=15, pady=10, sticky="w")
+        self.lbl_update_status.grid(row=14, column=1, padx=15, pady=10, sticky="w")
 
         return frame
 
@@ -680,6 +687,7 @@ class AssignmentFixerApp(ctk.CTk):
 
         self.config.gemini_cli_path = self.entry_gemini_cli.get().strip() or "gemini.cmd"
         self.config.gemini_api_key = self.entry_gemini_api_key.get().strip()
+        self.config.gemini_model = self.entry_gemini_model.get().strip() or "gemini-3.8-flash"
         self.config.kira_api_key = self.entry_api_key.get().strip()
         self.config.kira_base_url = self.entry_base_url.get().strip()
         self.config.kira_model = self.entry_model.get().strip()

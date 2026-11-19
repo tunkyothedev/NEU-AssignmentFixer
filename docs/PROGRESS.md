@@ -97,6 +97,11 @@ Tài liệu này ghi lại chi tiết các cột mốc, trạng thái hoàn thà
     + Cập nhật [`app/llm/gemini_cli.py`](file:///E:/AssignmentFixer/app/llm/gemini_cli.py): Kiểm tra `shutil.which` trước khi thực thi lệnh; nếu thiếu CLI, hiển thị hộp thoại hướng dẫn chi tiết bằng tiếng Việt thay vì lỗi crash hệ thống.
     + Tích hợp **Google Gemini Direct REST API** (`gemini_api`): Gọi trực tiếp endpoint chuẩn OpenAI của Google AI Studio (`https://generativelanguage.googleapis.com/v1beta/openai`) qua HTTPS; bất kỳ người dùng nào chỉ cần dán Gemini API Key miễn phí (lấy tại Google AI Studio) là ứng dụng chạy mượt 100% trên mọi máy tính mà không cần cài Node.js hay bất kỳ công cụ dòng lệnh nào.
     + Thêm tùy chọn *"Google Gemini (Trực tiếp qua API Key - Khuyên dùng)"* vào giao diện Cài Đặt Hệ Thống và tự động định tuyến thông minh.
+- **Cập nhật model Gemini API lên `gemini-3.8-flash` theo chuẩn mới nhất của Google AI:**
+  - **Nguyên nhân:** Google AI Studio đã chính thức ngừng hỗ trợ `models/gemini-2.0-flash` (mã lỗi 404 NOT_FOUND: *"This model models/gemini-2.0-flash is no longer available. Please update your code to use models/gemini-3.8-flash"*).
+  - **Khắc phục:**
+    + Cập nhật mặc định model Google Gemini REST API sang **`gemini-3.8-flash`** trong [`app/config.py`](file:///E:/AssignmentFixer/app/config.py) và [`app/main.py`](file:///E:/AssignmentFixer/app/main.py).
+    + Bổ sung ô nhập tùy chỉnh `Model Gemini (Google AI)` trong giao diện Cài Đặt Hệ Thống để người dùng linh hoạt đổi model theo nhu cầu.
 
 ---
 
