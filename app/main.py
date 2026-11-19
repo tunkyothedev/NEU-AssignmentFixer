@@ -57,18 +57,39 @@ class AssignmentFixerApp(ctk.CTk):
     def _load_available_courses(self):
         courses_dir = os.path.join(self.config.gdrive_data_dir, "courses")
         self.courses = {}
-        if os.path.exists(courses_dir):
-            for c_code in os.listdir(courses_dir):
-                p_yaml = os.path.join(courses_dir, c_code, "preset.yaml")
-                if os.path.exists(p_yaml):
-                    try:
-                        with open(p_yaml, "r", encoding="utf-8") as f:
-                            data = yaml.safe_load(f)
-                            self.courses[c_code] = data
-                    except Exception:
-                        pass
+
+        # 1. Check external data directory
+        candidate_dirs = [courses_dir]
+
+        # 2. If running as frozen executable, check bundled PyInstaller directories
+        if getattr(sys, "frozen", False):
+            meipass = getattr(sys, "_MEIPASS", "")
+            if meipass:
+                candidate_dirs.append(os.path.join(meipass, "data", "courses"))
+            exe_parent = Path(sys.executable).resolve().parent
+            candidate_dirs.append(str(exe_parent / "_internal" / "data" / "courses"))
+            candidate_dirs.append(str(exe_parent / "data" / "courses"))
+
+        for c_dir in candidate_dirs:
+            if os.path.exists(c_dir):
+                for c_code in os.listdir(c_dir):
+                    p_yaml = os.path.join(c_dir, c_code, "preset.yaml")
+                    if os.path.exists(p_yaml) and c_code not in self.courses:
+                        try:
+                            with open(p_yaml, "r", encoding="utf-8") as f:
+                                data = yaml.safe_load(f)
+                                self.courses[c_code] = data
+                        except Exception:
+                            pass
+
+        # 3. Fallback: Ensure all 4 standard BTEC NEU courses are available if files are missing
         if not self.courses:
-            self.courses["BS"] = {"course_name": "Business Strategy", "course_code": "BS"}
+            self.courses = {
+                "BS": {"course_name": "Business Strategy", "course_code": "BS"},
+                "OBM": {"course_name": "Organizational Behaviour and Management", "course_code": "OBM"},
+                "SFM": {"course_name": "Skills for Management / Strategic Financial Management", "course_code": "SFM"},
+                "MSBP": {"course_name": "Management and Strategic Business Project", "course_code": "MSBP"}
+            }
 
     def _build_ui(self):
         # Grid layout (1 row, 2 cols: sidebar + main content)

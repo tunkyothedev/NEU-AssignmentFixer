@@ -76,6 +76,13 @@ Tài liệu này ghi lại chi tiết các cột mốc, trạng thái hoàn thà
     + Bổ sung log thời gian thực chi tiết từng bước: `[3.1]` Quét định dạng -> `[3.2]` Thẩm định Rubric -> `[3.3]` Sửa đoạn văn học thuật -> `[3.4]` Tạo Track Changes bản địa -> `[3.5]` Chèn Comments vào Word.
   - **Kiểm thử thực tế end-to-end thành công 100%:** Luồng chạy tự động qua cả 5 bước trơn tru trong 18 giây, sinh file Word Track Changes kèm nhận xét Comments chuẩn chỉnh.
 
+- **Khắc phục lỗi bản đóng gói EXE chỉ có mỗi môn BS:**
+  - **Nguyên nhân:** Khi đóng gói PyInstaller, các tệp cài đặt môn học `data/courses/` (gồm BS, MSBP, OBM, SFM) và `data/style_guide.md` không được copy vào thư mục phát hành `dist/AssignmentFixer/`. Khi chạy file `.exe`, ứng dụng không tìm thấy thư mục `data/courses/` nên rơi vào nhánh fallback mặc định chỉ có duy nhất môn BS.
+  - **Khắc phục:**
+    + Cập nhật [`build_exe.py`](file:///E:/AssignmentFixer/build_exe.py) và [`package_release.py`](file:///E:/AssignmentFixer/package_release.py): Thêm cờ `--add-data` cho `data/courses/` và tự động đồng bộ đầy đủ toàn bộ thư mục `data/courses/` (cả 4 môn), `data/style_guide.md`, `local_config.example.json` sang `dist/AssignmentFixer/` trước khi đóng gói ZIP.
+    + Cập nhật [`app/main.py`](file:///E:/AssignmentFixer/app/main.py): Hàm `_load_available_courses()` tự động tìm kiếm cả ở thư mục ngoài lẫn bộ nhớ nén nội bộ `sys._MEIPASS`/`_internal`, đồng thời nếu thư mục trống sẽ fallback hiển thị đầy đủ cả 4 môn chuẩn BTEC (BS, OBM, SFM, MSBP).
+  - **Kiểm thử thực tế thành công:** Đã kiểm tra nạp thành công 4 môn `['BS', 'MSBP', 'OBM', 'SFM']` và đóng gói lại bản release ZIP chứa trọn vẹn dữ liệu.
+
 ---
 
 ## 5. Hướng Dẫn Sử Dụng

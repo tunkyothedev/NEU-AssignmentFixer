@@ -30,6 +30,26 @@ def package():
     version = os.getenv("RELEASE_VERSION") or (sys.argv[1] if len(sys.argv) > 1 else APP_VERSION)
     version = version.strip().lstrip("vV")
 
+    # Ensure presets and essentials exist in dist before zipping
+    src_courses = base_dir / "data" / "courses"
+    dist_courses = dist_dir / "data" / "courses"
+    if src_courses.exists():
+        print(f"[*] Đồng bộ dữ liệu môn học: {src_courses} -> {dist_courses}")
+        if dist_courses.exists():
+            shutil.rmtree(dist_courses)
+        shutil.copytree(src_courses, dist_courses)
+
+    src_style_guide = base_dir / "data" / "style_guide.md"
+    dist_style_guide = dist_dir / "data" / "style_guide.md"
+    if src_style_guide.exists():
+        dist_style_guide.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src_style_guide, dist_style_guide)
+
+    src_example_cfg = base_dir / "local_config.example.json"
+    dist_example_cfg = dist_dir / "local_config.example.json"
+    if src_example_cfg.exists():
+        shutil.copy2(src_example_cfg, dist_example_cfg)
+
     zip_filename = f"AssignmentFixer-v{version}-windows.zip"
     zip_path = releases_dir / zip_filename
 
