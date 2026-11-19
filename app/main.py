@@ -314,9 +314,8 @@ class AssignmentFixerApp(ctk.CTk):
                 self._log(f"[4/4] Hoàn tất! Phát hiện {res['rule_check']['issues_count']} lỗi hình thức, tạo {res['total_edits']} điểm sửa.")
             else:
                 out_path = os.path.join(out_dir, f"{base_name}_rewritten_augmented.docx")
-                self._log("[3/4] Đang chạy luồng Sửa nặng (Viết lại + Bổ sung tiêu chí thiếu + Highlight vàng)...")
-                res = self.heavy_pipeline.run(paper_path, brief_path, preset, out_path)
-                self._log(f"[4/4] Hoàn tất! Viết mới {res['augmented_sections_count']} phần highlight và {res['verify_citations_count']} nguồn cần kiểm chứng.")
+                res = self.heavy_pipeline.run(paper_path, brief_path, preset, out_path, log_cb=self._log)
+                self._log(f"[4/4] Hoàn tất! Bài viết đạt {res['final_word_count']} từ, bảo toàn {res['tables_preserved']} bảng phân tích và {res['references_preserved']} tài liệu tham khảo.")
 
             self.current_output_path = out_path
             self._log(f"[Xong] File kết quả: {out_path}")

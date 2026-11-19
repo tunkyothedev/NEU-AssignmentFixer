@@ -27,7 +27,40 @@ class AcademicRuleChecker:
         }
 
         target_font = self.fmt.get("font_family", "Times New Roman").lower()
-        target_body_size = self.fmt.get("font_size_body", 12)
+        target_body_size = self.fmt.get("font_size_body", 13)
+
+        # 0. Đếm số từ (Paragraphs + Tables)
+        p_words = sum(len(p.text.split()) for p in doc.paragraphs if p.text.strip())
+        t_words = 0
+        seen_cells = set()
+        for t in doc.tables:
+            for row in t.rows:
+                for cell in row.cells:
+                    if cell._tc not in seen_cells:
+                        seen_cells.add(cell._tc)
+                        t_words += len(cell.text.split())
+        total_words = p_words + t_words
+        stats["paragraph_words"] = p_words
+        stats["table_words"] = t_words
+        stats["total_words"] = total_words
+
+        target_words = self.preset.get("target_word_count")
+        tol = self.preset.get("word_count_tolerance", 0.10)
+        if target_words:
+            min_w = int(target_words * (1 - tol))
+            max_w = int(target_words * (1 + tol))
+            if total_words < min_w:
+                issues.append({
+                    "type": "word_count",
+                    "severity": "high",
+                    "message": f"Document length ({total_words} words) is below required limit ({min_w}-{max_w} words; target {target_words} ±{int(tol*100)}%)."
+                })
+            elif total_words > max_w:
+                issues.append({
+                    "type": "word_count",
+                    "severity": "medium",
+                    "message": f"Document length ({total_words} words) exceeds required limit ({min_w}-{max_w} words; target {target_words} ±{int(tol*100)}%)."
+                })
 
         # 1. Kiểm tra lề trang
         for i, section in enumerate(doc.sections):

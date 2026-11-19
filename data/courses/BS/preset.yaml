@@ -4,10 +4,10 @@ unit_title: 'Unit 43: Business Strategy (RQF Level 5)'
 program: BTEC Higher National Diploma in Business (RQF) - ISME NEU
 formatting:
   font_family: Times New Roman
-  font_size_body: 12
-  font_size_h1: 14
-  font_size_h2: 13
-  font_size_h3: 12
+  font_size_body: 13
+  font_size_h1: 15
+  font_size_h2: 14
+  font_size_h3: 13
   line_spacing: 1.5
   space_after: 6
   margins:
@@ -18,49 +18,26 @@ formatting:
   citation_style: HARVARD
   require_table_of_contents: true
   require_executive_summary_or_intro: true
-assessment_criteria:
-- id: D1
-  tier: Distinction
-  description: Create a set of valid strategic directions, objectives and tactical
-    actions for successfully achieving strategic alignment, based on critical interpretation
-    of internal and external data, and information
-- id: M1
-  tier: Merit
-  description: Critically analyse the macro environment to determine and inform strategic
-    management decisions
-- id: M2
-  tier: Merit
-  description: Interpret information and data to assess strengths and weaknesses of
-    an organisation’s internal capabilities, structure and skill set
-- id: M3
-  tier: Merit
-  description: Justify use of an appropriate strategic management tool for a given
-    market sector, to inform strategy and strategic objectives for an organisation
-- id: M4
-  tier: Merit
-  description: Produce a strategic management plan that has tangible and tactical
-    strategic priorities and objectives
-- id: P1
-  tier: Pass
-  description: Applying appropriate frameworks, analyse the impact and influence of
-    the macro environment on a given organisation and its strategies
-- id: P2
-  tier: Pass
-  description: Conduct an internal environment and capabilities assessment of a given
-    organisation using appropriate frameworks
-- id: P3
-  tier: Pass
-  description: Determine appropriate management tools to analyse a given market sector
-    for an organisation and inform strategy
-- id: P4
-  tier: Pass
-  description: Devise appropriate strategic objectives, based on the outcomes of analysis
-    for an organisation to inform strategy
-- id: P5
-  tier: Pass
-  description: Apply a range of models, concepts or theories to interpret and devise
-    strategic planning for a given organisation
-- id: P6
-  tier: Pass
-  description: Design a strategic management plan, applying appropriate strategies
-    to improve competitive edge and market position based on the outcomes
+  target_word_count: 4500
+  word_count_tolerance: 0.1
+brief_requirements:
+  - section_num: 1
+    title: Company Introduction
+    word_limit: "<300 words"
+    focus: "Company background, temporal milestones, vision, mission, strategic goals, and values."
+  - section_num: 2
+    title: Macro Environment Analysis
+    word_limit: "<1500 words"
+    focus: "PESTEL framework, Porter's Five Forces competitive analysis, positioning."
+  - section_num: 3
+    title: Internal Environment and Capabilities Assessment
+    word_limit: "<1200 words"
+    focus: "VRIO framework, Value Chain analysis, Core competences, competitive advantages."
+  - section_num: 4
+    title: Strategic Analysis and Business Strategy Formulation
+    word_limit: "<1000 words"
+    focus: "SWOT analysis, Ansoff Matrix, Corporate and SBU level strategic directions."
+  - section_num: 5
+    title: Strategic Management Plan
+    word_limit: "<500 words"
+    focus: "Critical success factors, tactical implementation plan, resource allocation, KPIs, strategic control, and risk mitigation."
